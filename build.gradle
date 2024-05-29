@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.1.1'
+    id "com.google.protobuf" version "0.9.4"
+}
+
+group 'com.livevox.is'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "${HOST}/atg-repo"
+        credentials {
+            username = "${USER}"
+            password = "${PASSWORD}"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact tasks.named("bootJar")
+            from components.java
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.23.4"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.57.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+dependencies {
+    implementation platform('com.livevox.is:platform:2.0.1')
+    annotationProcessor platform('com.livevox.is:platform:2.0.1')
+
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'com.livevox.is:domain:2.0.1'
+    implementation 'com.livevox.is:util:2.0.1'
+    implementation 'com.livevox.is:api-configuration:2.1.0'
+    implementation 'com.livevox.is:configurationclient:2.0.0'
+    implementation 'com.livevox.is:signinclient:2.0.0'
+    implementation 'com.livevox.is:notification-service-client:2.0.1'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.modelmapper:modelmapper'
+    implementation 'org.springdoc:springdoc-openapi-ui'
+    implementation 'io.grpc:grpc-protobuf'
+    implementation 'io.grpc:grpc-stub'
+    implementation 'net.devh:grpc-server-spring-boot-starter'
+
+    compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'io.grpc:grpc-netty-shaded'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-inline'
+    testImplementation 'io.grpc:grpc-testing'
+}
+
+java {
+    withSourcesJar()
+}
+
+test {
+    useJUnitPlatform()
+}
