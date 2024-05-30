@@ -1,24 +1,49 @@
 package com.livevox.is.metricsservice.controller.rest;
 
+import com.livevox.is.metricsservice.domain.AgentRequest;
+import com.livevox.is.metricsservice.domain.AgentsResponse;
+import com.livevox.is.metricsservice.domain.DashBoardResponse;
 import com.livevox.is.metricsservice.service.GenericService;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+
 @RestController
+@RequestMapping("/api")
 public class GenericController {
 
+//    @GrpcClient("genericService")
+//    private GenericServiceGrpc.GenericServiceBlockingStub genericGrpcServiceStub;
+
     @Autowired
-    private GenericService genericService;
+    GenericService genericService;
 
-    @GetMapping(value = "/generic-service")
-    public String getGenericResponse() {
+//    @PostMapping(value = "/agents")
+//    public AgentResponse getAgents(@Valid AgentRequest request) {
+//        return genericGrpcServiceStub.getAgents(request);
+//    }
 
-        String response = genericService.getResponse();
-
-        return response;
+    @GetMapping(value = "prueba")
+    public String getPrueba() {
+        return genericService.getResponse();
     }
 
+    @PostMapping(value = "/agents")
+    public AgentsResponse getAgents(@Valid AgentRequest request) {
+        if(request != null){
+            return genericService.getAgents(request);
+        } else {
+            return null;
+        }
+    }
+
+    @GetMapping(value = "callCentersAndSkills/Dashboard/{token}/")
+    public DashBoardResponse getDashBoards(@PathVariable(name = "token") String token, @RequestParam(name = "_dc") Long dc) {
+        if(dc != null && token != null){
+            return genericService.getDashBoards(token, dc);
+        } else {
+            return null;
+        }
+    }
 }

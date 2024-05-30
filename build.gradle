@@ -69,6 +69,7 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf'
     implementation 'io.grpc:grpc-stub'
     implementation 'net.devh:grpc-server-spring-boot-starter'
+    implementation 'net.devh:grpc-client-spring-boot-starter'
 
     compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
 
