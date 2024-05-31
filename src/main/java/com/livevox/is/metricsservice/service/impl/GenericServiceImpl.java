@@ -19,55 +19,65 @@ public class GenericServiceImpl implements GenericService {
     }
 
     @Override
-    public AgentsResponse getAgents(AgentRequest request) {
-        Agent mockAgent = new Agent();
-        mockAgent.setActive(true);
-        mockAgent.setClientId(1);
-        mockAgent.setId(1);
-        mockAgent.setFirstName("Prueba");
-        mockAgent.setLastName("Test");
-        mockAgent.setPhone("123456789");
-        mockAgent.setLoginId("987");
-
-        AgentsResponse agentsResponse = new AgentsResponse();
+    public GenericResponse<Agent> getAgents(AgentRequest request) {
+        GenericResponse<Agent> resp = new GenericResponse<>();
 
         List<Agent> agents = new ArrayList<>();
-        agents.add(mockAgent);
+        Agent agent = new Agent();
 
-        agentsResponse.setData(agents);
+        agent.setActive(false);
+        agent.setClientId(1008784);
+        agent.setId(1065618L);
+        agent.setFirstName("dialer");
+        agent.setLastName("team");
+        agent.setPhone("1234");
+        agent.setLoginId("DIALER");
 
-        agentsResponse.setStatus(0);
-        agentsResponse.setTotalCount(agents.size());
+        agents.add(agent);
+        resp.setData(agents);
 
-        return agentsResponse;
+        resp.setTotalCount(resp.getData().size());
+        resp.setStatus(Response.ResponseStatus.SUCESS.getCode());
+        return resp;
     }
 
     @Override
-    public DashBoardResponse getDashBoards(String token, Long dc) {
-        CallCenter callCenter = new CallCenter();
-        callCenter.setClientId(1);
-        callCenter.setName("Prueba");
-        callCenter.setId(1);
-        callCenter.setCallCenterId(1);
+    public GenericResponse<Client> getDashBoards(String appName, String token) {
 
-        DashBoardResponse dashBoardResponse = new DashBoardResponse();
-        DashBoard dashBoard = new DashBoard();
+        GenericResponse<Client> resp = new GenericResponse<>();
 
+        List<Client> clients = new ArrayList<>();
         List<CallCenter> callCenters = new ArrayList<>();
-        List<DashBoard> dashBoards = new ArrayList<>();
+        List<Skill> skills = new ArrayList<>();
+
+        Client client = new Client();
+        CallCenter callCenter = new CallCenter();
+        Skill skill = new Skill();
+
+        client.setId(1008784);
+
+        callCenter.setName("Call Center");
+        callCenter.setCallCenterId(1008784L);
+        callCenter.setClientId(1003619);
+
+        skill.setSkillId(1008784);
+        skill.setServiceId(1008784);
+        skill.setName("AgentReg");
+        skill.setId(1008784L);
+        skill.setCallCenterId(1003619);
 
         callCenters.add(callCenter);
+        skills.add(skill);
 
-        dashBoard.setCallCenters(callCenters);
-        dashBoard.setId(1);
+        callCenter.setServices(skills);
+        client.setCallCenters(callCenters);
 
-        dashBoards.add(dashBoard);
+        clients.add(client);
+        resp.setData(clients);
 
-        dashBoardResponse.setData(dashBoards);
-        dashBoardResponse.setStatus(0);
-        dashBoardResponse.setTotalCount(dashBoards.size());
-
-        return dashBoardResponse;
+        resp.setTotalCount(resp.getData().size());
+        resp.setStatus(Response.ResponseStatus.SUCESS.getCode());
+        return resp;
     }
 
 }

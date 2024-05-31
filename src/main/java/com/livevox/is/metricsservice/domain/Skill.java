@@ -10,10 +10,12 @@ import java.util.List;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CallCenter implements Serializable {
-    private Long callCenterId;
+public class Skill implements Serializable {
+    private Integer callCenterId;
+    private Integer skillId;
+    private Integer serviceId;
     private String name;
-    private int clientId;
-    private int id;
-    private List<Skill> services;
+    private List<TermCode> termCodes;
+    private String direction;
+    private Long id;
 }

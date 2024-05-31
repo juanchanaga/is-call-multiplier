@@ -1,10 +1,8 @@
 package com.livevox.is.metricsservice.controller.rest;
 
-import com.livevox.is.metricsservice.domain.AgentRequest;
-import com.livevox.is.metricsservice.domain.AgentsResponse;
-import com.livevox.is.metricsservice.domain.DashBoardResponse;
+import com.livevox.is.metricsservice.domain.*;
 import com.livevox.is.metricsservice.service.GenericService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,20 +28,22 @@ public class GenericController {
     }
 
     @PostMapping(value = "/agents")
-    public AgentsResponse getAgents(@Valid AgentRequest request) {
-        if(request != null){
-            return genericService.getAgents(request);
+    public GenericResponse<Agent> getAgents(@RequestBody AgentRequest req,
+                                            HttpServletResponse httpResp) {
+        if(req != null){
+            return genericService.getAgents(req);
         } else {
             return null;
         }
     }
 
-    @GetMapping(value = "callCentersAndSkills/Dashboard/{token}/")
-    public DashBoardResponse getDashBoards(@PathVariable(name = "token") String token, @RequestParam(name = "_dc") Long dc) {
-        if(dc != null && token != null){
-            return genericService.getDashBoards(token, dc);
-        } else {
-            return null;
-        }
+    @GetMapping(value = "/callCentersAndSkills/{appName}/{token}/")
+    public GenericResponse<Client> getDashBoards(@PathVariable String appName, @PathVariable String token,
+                                                 HttpServletResponse httpResp) {
+
+        GenericResponse<Client> resp;
+        resp = genericService.getDashBoards(appName, token);
+
+        return resp;
     }
 }

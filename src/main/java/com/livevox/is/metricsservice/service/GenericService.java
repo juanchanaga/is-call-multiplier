@@ -1,14 +1,10 @@
 package com.livevox.is.metricsservice.service;
 
-import com.livevox.is.metricsservice.domain.AgentRequest;
-import com.livevox.is.metricsservice.domain.AgentsResponse;
-import com.livevox.is.metricsservice.domain.DashBoardResponse;
-
-import java.util.List;
+import com.livevox.is.metricsservice.domain.*;
 
 public interface GenericService {
 
     String getResponse();
-    AgentsResponse getAgents(AgentRequest request);
-    DashBoardResponse getDashBoards(String token, Long dc);
+    GenericResponse<Agent> getAgents(AgentRequest request);
+    GenericResponse<Client> getDashBoards(String appName, String token);
 }
