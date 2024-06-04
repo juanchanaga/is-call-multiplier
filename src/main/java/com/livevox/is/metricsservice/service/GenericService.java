@@ -2,9 +2,11 @@ package com.livevox.is.metricsservice.service;
 
 import com.livevox.is.metricsservice.domain.*;
 
+import java.util.List;
+
 public interface GenericService {
 
     String getResponse();
-    GenericResponse<Agent> getAgents(AgentRequest request);
+    List<Agent> getAgents(AgentRequest request) throws Exception;
     GenericResponse<Client> getDashBoards(String appName, String token);
 }

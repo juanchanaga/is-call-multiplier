@@ -3,11 +3,15 @@ package com.livevox.is.metricsservice.controller.rest;
 import com.livevox.is.metricsservice.domain.*;
 import com.livevox.is.metricsservice.service.GenericService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@Slf4j
 @RequestMapping("/api")
 public class GenericController {
 
@@ -28,13 +32,26 @@ public class GenericController {
     }
 
     @PostMapping(value = "/agents")
-    public GenericResponse<Agent> getAgents(@RequestBody AgentRequest req,
-                                            HttpServletResponse httpResp) {
-        if(req != null){
-            return genericService.getAgents(req);
-        } else {
-            return null;
+    public ResponseEntity<GenericResponse<Agent>> getAgents(@Valid @RequestBody AgentRequest req) throws Exception {
+
+        GenericResponse<Agent> response = new GenericResponse<>();
+
+        if(req.getCount() == null){
+            req.setCount(1000);
         }
+
+        if(req.getCount() == null){
+            req.setCount(0);
+        }
+
+        response.setData(genericService.getAgents(req));
+
+        if(response.getData().isEmpty()){
+            log.info("No found agents");
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/callCentersAndSkills/{appName}/{token}/")

@@ -1,6 +1,7 @@
 package com.livevox.is.metricsservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.livevox.integration.commons.domain.stats.IdType;
 import lombok.Getter;
 import lombok.Setter;
 
