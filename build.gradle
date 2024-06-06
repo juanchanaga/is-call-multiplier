@@ -1,93 +1,63 @@
 plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'org.springframework.boot' version '3.1.1'
-    id "com.google.protobuf" version "0.9.4"
+	id 'java'
+	id 'maven-publish'
+	id 'org.springframework.boot' version '3.1.1'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id "com.google.protobuf" version "0.9.4"
+	id("org.openrewrite.rewrite") version("6.14.0")
 }
 
-group 'com.livevox.is'
+group = 'com.livevox.is'
+archivesBaseName='is-call-multiplier'
+description = 'is-call-multiplie'
 sourceCompatibility = '17'
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 repositories {
-    mavenCentral()
-    maven {
-        url "${HOST}/atg-repo"
-        credentials {
-            username = "${USER}"
-            password = "${PASSWORD}"
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact tasks.named("bootJar")
-            from components.java
-        }
-    }
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.23.4"
-    }
-    plugins {
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.57.0'
-        }
-    }
-    generateProtoTasks {
-        all()*.plugins {
-            grpc {}
-        }
-    }
+	mavenCentral()
+	maven {
+		url "${HOST}/atg-repo"
+		credentials {
+			username = "${USER}"
+			password = "${PASSWORD}"
+		}
+	}
 }
 
 dependencies {
-    implementation platform('com.livevox.is:platform:2.0.1')
-    annotationProcessor platform('com.livevox.is:platform:2.0.1')
-
-    annotationProcessor 'org.projectlombok:lombok'
-
-    implementation 'com.livevox.integration:commons:0.1.37'
-    implementation 'com.livevox.is:domain:2.0.1'
-    implementation 'com.livevox.is:util:2.0.1'
-    implementation 'com.livevox.is:api-configuration:2.1.0'
-    implementation 'com.livevox.is:configurationclient:2.0.0'
-    implementation 'com.livevox.is:signinclient:2.0.0'
-    implementation 'com.livevox.is:notification-service-client:2.0.1'
-
-    implementation 'org.springframework.cloud:spring-cloud-starter-config'
-    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.retry:spring-retry'
-    implementation 'org.apache.commons:commons-lang3'
-    implementation 'org.modelmapper:modelmapper'
-    implementation 'org.springdoc:springdoc-openapi-ui'
-    implementation 'io.grpc:grpc-protobuf'
-    implementation 'io.grpc:grpc-stub'
-    implementation 'net.devh:grpc-server-spring-boot-starter'
-    implementation 'net.devh:grpc-client-spring-boot-starter'
-    implementation 'org.apache.activemq:activemq-client:5.17.1'
-    implementation 'javax.jms:javax.jms-api:2.0.1'
-
-    compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
-
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    runtimeOnly 'io.grpc:grpc-netty-shaded'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mockito:mockito-inline'
-    testImplementation 'io.grpc:grpc-testing'
+	implementation 'com.livevox.integration:commons:0.1.37'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	implementation("org.apache.httpcomponents.client5:httpclient5")
+	implementation 'org.apache.commons:commons-lang3'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly "com.mysql:mysql-connector-j:${mySqlVersion}"
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 }
 
-java {
-    withSourcesJar()
+rewrite {
+	activeRecipe("org.openrewrite.java.migrate.jakarta.JavaxXmlWsMigrationToJakartaXmlWs")
+}
+
+dependencies {
+	rewrite("org.openrewrite.recipe:rewrite-migrate-java:2.16.0")
 }
 
 test {
-    useJUnitPlatform()
+	useJUnitPlatform()
+}
+
+bootJar {
+	launchScript()
 }
