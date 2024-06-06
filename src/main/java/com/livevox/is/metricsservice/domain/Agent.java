@@ -1,17 +1,20 @@
 package com.livevox.is.metricsservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.livevox.integration.commons.domain.stats.DefaultDao;
+import com.livevox.integration.commons.domain.stats.IdType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Agent {
-    private Long id;
+public class Agent extends DefaultDao implements Serializable {
+    private Long iId;
     private String loginId;
     private String firstName;
     private String lastName;

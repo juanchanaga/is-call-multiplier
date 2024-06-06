@@ -1,18 +1,17 @@
 package com.livevox.is.metricsservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.Setter;
+import com.livevox.integration.commons.domain.lvapi.ListRequest;
+import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
 
-@Getter
-@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 @ToString( callSuper = true)
-public class AgentRequest implements Serializable {
+public class AgentRequest  extends ListRequest implements Serializable, Cloneable {
     private String application;
     private Date startDate;
     private Date endDate;
