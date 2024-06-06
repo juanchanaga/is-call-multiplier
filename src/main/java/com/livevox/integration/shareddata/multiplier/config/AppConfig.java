@@ -12,9 +12,12 @@ import com.livevox.commons.services.config.AtgConfigRestService;
 import com.livevox.commons.services.config.AtgConfigRestServiceImpl;
 import com.livevox.commons.services.config.AtgConfigServiceImpl;
 import com.livevox.commons.services.signin.SignInService;
+import com.livevox.is.util.grpc.exception.GlobalGrpcExceptionHandler;
+import com.livevox.is.util.rest.exception.GlobalExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
 
@@ -23,6 +26,9 @@ import javax.sql.DataSource;
  *
  * @autor Luis Felipe Sosa Alvarez lsosa@livevox.com
  */
+@Import({
+        GlobalExceptionHandler.class,
+        GlobalGrpcExceptionHandler.class,})
 public class AppConfig {
 
 

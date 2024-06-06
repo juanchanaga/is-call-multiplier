@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootApplication(exclude ={JmsAutoConfiguration.class, ActiveMQAutoConfiguration.class})
 @Import({AppConfig.class})
-public class isCallmultiplier {
+public class IsCallMultiplier {
 
 	/**
 	 * The entry point of application.
@@ -29,6 +29,6 @@ public class isCallmultiplier {
 	 * @param args the input arguments
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(isCallmultiplier.class, args);
+		SpringApplication.run(IsCallMultiplier.class, args);
 	}
 }

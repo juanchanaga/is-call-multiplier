@@ -23,6 +23,8 @@ import com.livevox.integration.shareddata.multiplier.jobs.ConfigDetailsJob;
 import com.livevox.integration.shareddata.multiplier.jobs.TermCodeLookupJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -87,20 +89,19 @@ public class CallMultiplierServiceAbstract {
      * Is authenticated as integer.
      *
      * @param token the token
-     * @return the integer
-     * @throws UnauthorizedException the unauthorized exception
+     * @return the ResponseEntity
      */
-    public Integer isAuthenticatedAs(final String token) throws UnauthorizedException{
+    public ResponseEntity<Integer> isAuthenticatedAs(final String token) {
         log.debug("START - isAuthenticated() ");
         if(token == null) {
-            throw new UnauthorizedException("Session Token Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         AuthResponse auth =  signInService.isAuthenticated(token);
         if(auth != null && auth.isValidToken()) {
             log.debug("END - isAuthenticated() ");
-            return auth.getClientId();
+            return ResponseEntity.ok(auth.getClientId());
         }
-        throw new UnauthorizedException("Session Token Unauthorized");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 
@@ -137,7 +138,7 @@ public class CallMultiplierServiceAbstract {
     protected <T> List<T> getConcurrentJobList(final Integer filterClientId,
                                                final JobRequest req, Class<T> jobClass, final Permission.PermissionType permission)
             throws MissingFieldsException, Exception {
-        return getConcurrentJobList(filterClientId, req, jobClass, false, permission);
+        return getConcurrentJobList(filterClientId, req, jobClass, false, permission).getBody();
     }
 
 
@@ -153,46 +154,43 @@ public class CallMultiplierServiceAbstract {
      * @throws MissingFieldsException the missing fields exception
      * @throws Exception              the exception
      */
-    protected <T> List<T> getConcurrentJobList(final Integer filterClientId,
-                                               final JobRequest req, Class<T> jobClass, final Boolean addPermissionsRestrictions,
-                                               final Permission.PermissionType permission) throws MissingFieldsException,
-            Exception {
-        if( req == null || jobClass == null || req.getClientId() == null) {
-            throw new MissingFieldsException();
+    protected <T> ResponseEntity<List<T>> getConcurrentJobList(final Integer filterClientId,
+                                                               final JobRequest req, Class<T> jobClass, final Boolean addPermissionsRestrictions,
+                                                               final Permission.PermissionType permission) throws Exception {
+
+        if (req == null || jobClass == null || req.getClientId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Error 400 si faltan campos
         }
+
         List<Client> callCntrSrvcList = null;
         if (addPermissionsRestrictions != null && addPermissionsRestrictions) {
-            callCntrSrvcList = getCallCentersAndSkills(null, req.getApplication(),
-                    req.getSessoinId());
+            callCntrSrvcList = getCallCentersAndSkills(null, req.getApplication(), req.getSessoinId());
         }
-        //
-        //  If the owner requested their own data add a job for that.
-        //
-        List<T>  jobList = new ArrayList<T>();
-        List<Integer> jobClientIdsAdded = new ArrayList<Integer>();
-        if( isRequestForOwner(req.getClientId(), filterClientId) ) {
+
+        List<T> jobList = new ArrayList<>();
+        List<Integer> jobClientIdsAdded = new ArrayList<>();
+
+        if (isRequestForOwner(req.getClientId(), filterClientId)) {
             JobRequest newReq = req.copy();
-            if( !isJobBlockedByPermissions(req,newReq, callCntrSrvcList) ) {
+            if (!isJobBlockedByPermissions(req, newReq, callCntrSrvcList)) {
                 jobList.add(getJobInstance(newReq, jobClass));
                 jobClientIdsAdded.add(req.getClientId());
             }
         }
 
-        //
-        // Add jobs for shared data
-        //
         List<Share> sharedClients = null;
         try {
             sharedClients = sharedDao.getSharesForClient(req.getClientId());
-        } catch(Exception e) {
-            log.error("Looking up clients shared data failed for clientId: "+req.getClientId(), e);
+        } catch (Exception e) {
+            log.error("Looking up clients shared data failed for clientId: " + req.getClientId(), e);
         }
-        if(sharedClients == null ) {
-            return jobList;
+
+        if (sharedClients == null) {
+            return ResponseEntity.ok(jobList);
         }
-        addJobsForSharedClients(filterClientId, req, jobClass, permission, callCntrSrvcList,
-                jobList, sharedClients, jobClientIdsAdded);
-        return jobList;
+
+        addJobsForSharedClients(filterClientId, req, jobClass, permission, callCntrSrvcList, jobList, sharedClients, jobClientIdsAdded);
+        return ResponseEntity.ok(jobList);
     }
 
     /**
@@ -206,14 +204,14 @@ public class CallMultiplierServiceAbstract {
      * @throws Exception             the exception
      */
     public List<Client> getCallCentersAndSkills(final Integer filterClientId,
-                                                final String appName, final String token) throws UnauthorizedException, Exception {
-        Integer userClientId = isAuthenticatedAs(token);
+                                                final String appName, final String token) throws Exception {
+        Integer userClientId = isAuthenticatedAs(token).getBody().intValue();
 
         JobRequest jobReq = new JobRequest(userClientId, token, appName, configService);
 
 
         List<ConfigDetailsJob> configDetailsJobs = getConcurrentJobList(filterClientId,
-                jobReq, ConfigDetailsJob.class, false, Permission.PermissionType.READ);
+                jobReq, ConfigDetailsJob.class, false, Permission.PermissionType.READ).getBody();
 
         configDetailsJobs.forEach(configItem->configItem.setSignInService(signInService));
 
@@ -245,7 +243,7 @@ public class CallMultiplierServiceAbstract {
     public List<Client> getTermCodes(final Integer filterClientId,
                                      final String appName, final String token) throws UnauthorizedException,
             MissingFieldsException, Exception {
-        Integer userClientId = isAuthenticatedAs(token);
+        Integer userClientId = isAuthenticatedAs(token).getBody().intValue();
         List<TermCodeLookupJob> termCodeJobs = getConcurrentJobList(filterClientId,
                 new JobRequest(userClientId, token, appName, configService),
                 TermCodeLookupJob.class, Permission.PermissionType.READ);

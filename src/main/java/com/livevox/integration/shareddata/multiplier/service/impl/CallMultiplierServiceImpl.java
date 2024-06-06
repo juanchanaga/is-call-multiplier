@@ -5,7 +5,7 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.service;
+package com.livevox.integration.shareddata.multiplier.service.impl;
 
 import com.livevox.commons.domain.Access;
 import com.livevox.commons.domain.Client;
@@ -22,7 +22,9 @@ import com.livevox.integration.shareddata.multiplier.jobs.AgentAccountLookupJob;
 import com.livevox.integration.shareddata.multiplier.jobs.AgentLookupJob;
 import com.livevox.integration.shareddata.multiplier.jobs.AsessorCallDataJob;
 import com.livevox.integration.shareddata.multiplier.jobs.CampaignLookupJob;
+import com.livevox.integration.shareddata.multiplier.service.CallMultiplierServiceAbstract;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
-public class CallMultiplierServiceImpl extends CallMultiplierServiceAbstract{
+public class CallMultiplierServiceImpl extends CallMultiplierServiceAbstract {
 
 
     /**
@@ -73,11 +75,11 @@ public class CallMultiplierServiceImpl extends CallMultiplierServiceAbstract{
         List<AgentLookupJob>  agentJobs = new ArrayList<AgentLookupJob>();
         JobRequest jobReq = new JobRequest(agntReq);
         jobReq.setConfigService(configService);
-        jobReq.setClientId( isAuthenticatedAs(agntReq.getApiSessionId()) );
+        jobReq.setClientId( isAuthenticatedAs(agntReq.getApiSessionId()).getBody().intValue() );
 
         try {
             agentJobs = getConcurrentJobList(agntReq.getClientId(),
-                    jobReq, AgentLookupJob.class, true, Permission.PermissionType.READ);
+                    jobReq, AgentLookupJob.class, true, Permission.PermissionType.READ).getBody();
         } catch(Exception e) {
             log.error("Generating campaign lookup jobs failed. ", e);
             throw e;
@@ -106,12 +108,12 @@ public class CallMultiplierServiceImpl extends CallMultiplierServiceAbstract{
         List<CampaignLookupJob>  campaignJobs = new ArrayList<>();
         JobRequest jobReq = new JobRequest(recordingReq);
         jobReq.setConfigService(configService);
-        jobReq.setClientId( isAuthenticatedAs(recordingReq.getApiSessionId()) );
+        jobReq.setClientId( isAuthenticatedAs(recordingReq.getApiSessionId()).getBody().intValue() );
 
         try {
             campaignJobs = getConcurrentJobList(jobReq.getClientId(),
                     jobReq, CampaignLookupJob.class, true,
-                    Permission.PermissionType.READ);
+                    Permission.PermissionType.READ).getBody();
         } catch(Exception e) {
             log.error("Generating campaign lookup jobs failed. ", e);
             throw e;
@@ -151,16 +153,16 @@ public class CallMultiplierServiceImpl extends CallMultiplierServiceAbstract{
     }
 
     public List<AgentAccount> getAgentAccount(final AgentRequest request) throws
-            MissingFieldsException, UnauthorizedException, Exception {
+            Exception {
         JobRequest req = new JobRequest(request);
         req.setConfigService(configService);
-        req.setClientId(isAuthenticatedAs(request.getApiSessionId()));
+        req.setClientId(isAuthenticatedAs(request.getApiSessionId()).getBody().intValue());
 
         List<AgentAccountLookupJob> agentLookupJobs;
 
         try {
             agentLookupJobs = getConcurrentJobList(request.getClientId(),
-                    req, AgentAccountLookupJob.class, true, Permission.PermissionType.READ);
+                    req, AgentAccountLookupJob.class, true, Permission.PermissionType.READ).getBody();
         } catch(Exception e) {
             throw e;
         }
@@ -191,8 +193,8 @@ public class CallMultiplierServiceImpl extends CallMultiplierServiceAbstract{
     }
 
     public List<AssessorData> getAssessorData(final AssessorRequest req) throws
-            UnauthorizedException, Exception {
-        Integer userClientId = isAuthenticatedAs(req.getToken());
+            Exception {
+        Integer userClientId = isAuthenticatedAs(req.getToken()).getBody().intValue();
         List<AsessorCallDataJob> asessorJobList = new ArrayList<>();
         String host = configService.getRequiredProperty(ASSESSOR_HOST_PROPERTY_NAME);
 

@@ -30,6 +30,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'com.livevox.is:util:2.0.1'
 	implementation 'com.livevox.integration:commons:0.1.37'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

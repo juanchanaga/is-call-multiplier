@@ -5,7 +5,7 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.service;
+package com.livevox.integration.shareddata.multiplier.service.impl;
 
 import com.livevox.commons.domain.ClientInfo;
 import com.livevox.commons.domain.Permission;
@@ -21,6 +21,7 @@ import com.livevox.integration.shareddata.multiplier.domain.JobRequest;
 import com.livevox.integration.shareddata.multiplier.domain.RecordingRequest;
 import com.livevox.integration.shareddata.multiplier.jobs.CallRecordingInfoJob;
 import com.livevox.integration.shareddata.multiplier.jobs.CallRecordingLookupJob;
+import com.livevox.integration.shareddata.multiplier.service.CallMultiplierServiceAbstract;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,7 +34,7 @@ import java.util.concurrent.*;
 
 @Service
 @Slf4j
-public class CallMultiplierRecordingServiceImpl extends  CallMultiplierServiceAbstract{
+public class CallMultiplierRecordingServiceImpl extends CallMultiplierServiceAbstract {
 
 
     /**
@@ -64,10 +65,10 @@ public class CallMultiplierRecordingServiceImpl extends  CallMultiplierServiceAb
 
         JobRequest jobReq = new JobRequest(req);
         jobReq.setConfigService(configService);
-        jobReq.setClientId( isAuthenticatedAs(token) );
+        jobReq.setClientId( isAuthenticatedAs(token).getBody().intValue() );
 
-        List<CallRecordingLookupJob> callRecordingJobList =  getConcurrentJobList(
-                req.getClientId(), jobReq, CallRecordingLookupJob.class, true, Permission.PermissionType.READ);
+        List<CallRecordingLookupJob> callRecordingJobList = getConcurrentJobList(
+                req.getClientId(), jobReq, CallRecordingLookupJob.class, true, Permission.PermissionType.READ).getBody();
 
         List<CallRecording> completeRecordingList = new ArrayList<CallRecording>();
         try {
@@ -106,15 +107,15 @@ public class CallMultiplierRecordingServiceImpl extends  CallMultiplierServiceAb
     }
 
     public CallRecording getCallRecordingInfo(final String id, final String token) throws
-            UnauthorizedException, Exception {
+            Exception {
         JobRequest jobReq = new JobRequest();
         jobReq.setConfigService(configService);
-        jobReq.setClientId( isAuthenticatedAs(token) );
+        jobReq.setClientId( isAuthenticatedAs(token).getBody().intValue() );
         jobReq.setRecordingId(id);
         jobReq.setSessoinId(token);
 
-        List<CallRecordingInfoJob> callRecordingJobList =  getConcurrentJobList(
-                null, jobReq, CallRecordingInfoJob.class, false, Permission.PermissionType.READ);
+        List<CallRecordingInfoJob> callRecordingJobList = getConcurrentJobList(
+                null, jobReq, CallRecordingInfoJob.class, false, Permission.PermissionType.READ).getBody();
 
         try {
             List<Future<CallRecording>> recInfoJobs = executionService.invokeAll(
@@ -159,7 +160,7 @@ public class CallMultiplierRecordingServiceImpl extends  CallMultiplierServiceAb
     public byte[] getCallRecordingFile(final String callId, final String objectid,
                                        final Integer ownerClientId, final String appName, final String token)
             throws UnauthorizedException, MissingFieldsException {
-        Integer userClientId = isAuthenticatedAs(token);
+        Integer userClientId = isAuthenticatedAs(token).getBody().intValue();
         if( userClientId == null|| ownerClientId == null || token == null) {
             throw new MissingFieldsException();
         }

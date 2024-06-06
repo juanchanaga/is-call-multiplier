@@ -5,7 +5,7 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.rest;
+package com.livevox.integration.shareddata.multiplier.controller.rest;
 
 
 import com.livevox.commons.domain.Client;
@@ -16,13 +16,14 @@ import com.livevox.commons.exceptions.UnauthorizedException;
 import com.livevox.integration.commons.domain.lvapi.Agent;
 import com.livevox.integration.commons.domain.lvapi.AgentAccount;
 import com.livevox.integration.shareddata.multiplier.domain.*;
-import com.livevox.integration.shareddata.multiplier.service.CallMultiplierServiceImpl;
+import com.livevox.integration.shareddata.multiplier.service.impl.CallMultiplierServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -232,45 +233,29 @@ public class MultiplierController {
      * Gets agents.
      *
      * @param req      the req
-     * @param httpResp the http resp
      * @return the agents
      */
     @PostMapping ("/agents/")
-    public GenericResponse<Agent> getAgents(@RequestBody AgentRequest req,
-                                            HttpServletResponse httpResp) {
+    public ResponseEntity<GenericResponse<Agent>> getAgents(@RequestBody AgentRequest req) throws Exception {
 
-        GenericResponse<Agent> resp = new GenericResponse<>();
+        GenericResponse<Agent> response = new GenericResponse<>();
 
-        if(req.getCount() == null) {
+        if(req.getCount() == null){
             req.setCount(1000);
         }
-        if(req.getOffset() == null ) {
-            req.setOffset(0);
+
+        if(req.getCount() == null){
+            req.setCount(0);
         }
 
-        try {
-            resp.setData(callMultiplierServiceImpl.getAgents(req) );
-            resp.setStatus(Response.ResponseStatus.SUCESS.getCode());
-        } catch(UnauthorizedException e) {
-            log.error("getAgents() call failed due to bad token. ", e);
-            httpResp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.setStatus(Response.ResponseStatus.AUTH_FAILED.getCode());
-            resp.addErrorMessage("Access Denied");
-        }  catch(MissingFieldsException e) {
-            log.error("getAgents() call failed due to missing fields. ", e);
-            httpResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.setStatus(Response.ResponseStatus.BAD_REQUEST.getCode());
-            resp.addErrorMessage("Missing Required fields");
-        } catch(DataIntegrityViolationException e) {
-            log.error("getAgents() Getting Agent list lookup failed. ", e);
-            resp.setStatus(Response.ResponseStatus.BAD_REQUEST.getCode());
-            httpResp.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-        } catch(Exception exp) {
-            log.error("getAgents() Getting Agent list lookup failed. ", exp);
-            resp.setStatus(Response.ResponseStatus.SYSTEM.getCode());
-            httpResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setData(callMultiplierServiceImpl.getAgents(req));
+
+        if(response.getData().isEmpty()){
+            log.info("No found agents");
+            return ResponseEntity.noContent().build();
         }
-        return resp;
+
+        return ResponseEntity.ok(response);
     }
 
     /**

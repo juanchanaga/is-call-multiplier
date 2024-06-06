@@ -9,8 +9,10 @@ package com.livevox.commons.domain;
 
 import com.livevox.integration.commons.domain.stats.Skill;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class SkillDetails extends Skill {
 
     /**
