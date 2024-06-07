@@ -5,11 +5,11 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.commons.domain;
+package com.livevox.multiplier.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.livevox.commons.domain.Permission.PermissionType;
+import com.livevox.multiplier.domain.Permission.PermissionType;
 import com.livevox.integration.commons.domain.stats.DefaultDao;
 import lombok.Data;
 import org.apache.commons.lang3.builder.EqualsBuilder;

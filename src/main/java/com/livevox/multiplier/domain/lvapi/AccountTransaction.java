@@ -5,7 +5,7 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.commons.domain.lvapi;
+package com.livevox.multiplier.domain.lvapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

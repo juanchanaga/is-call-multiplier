@@ -5,10 +5,10 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.commons.domain.lvapi;
+package com.livevox.multiplier.domain.lvapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.livevox.integration.commons.domain.enums.AddressType;
+import com.livevox.multiplier.domain.enums.AddressType;
 import lombok.Data;
 
 @Data

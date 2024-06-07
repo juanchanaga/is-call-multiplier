@@ -5,13 +5,13 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.jobs;
+package com.livevox.multiplier.jobs;
 
-import com.livevox.commons.domain.ClientInfo;
-import com.livevox.commons.services.config.AtgConfigService;
-import com.livevox.commons.services.rest.session.LvSessionRestServiceImpl;
-import com.livevox.integration.commons.domain.lvapi.ListRequest;
-import com.livevox.integration.shareddata.multiplier.domain.JobRequest;
+import com.livevox.multiplier.domain.ClientInfo;
+import com.livevox.multiplier.services.config.AtgConfigService;
+import com.livevox.multiplier.services.impl.LvSessionRestServiceImpl;
+import com.livevox.multiplier.domain.lvapi.ListRequest;
+import com.livevox.multiplier.domain.JobRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

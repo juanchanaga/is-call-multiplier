@@ -5,7 +5,7 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.commons.domain.enums;
+package com.livevox.multiplier.domain.enums;
 
 public enum AddressType {
     MAILING,

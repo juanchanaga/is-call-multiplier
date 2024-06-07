@@ -5,16 +5,14 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.jobs;
+package com.livevox.multiplier.jobs;
 
-import com.livevox.integration.commons.domain.lvapi.Agent;
-import com.livevox.commons.exceptions.UnauthorizedException;
-import com.livevox.commons.services.rest.configuration.LvAgentRestService;
-import com.livevox.commons.services.rest.configuration.LvAgentRestServiceImpl;
-import com.livevox.integration.shareddata.multiplier.domain.JobRequest;
+import com.livevox.multiplier.domain.lvapi.Agent;
+import com.livevox.multiplier.domain.exceptions.UnauthorizedException;
+import com.livevox.multiplier.services.LvAgentRestService;
+import com.livevox.multiplier.services.impl.LvAgentRestServiceImpl;
+import com.livevox.multiplier.domain.JobRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import jakarta.xml.ws.WebServiceException;

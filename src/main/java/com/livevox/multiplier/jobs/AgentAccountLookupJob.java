@@ -1,10 +1,10 @@
-package com.livevox.integration.shareddata.multiplier.jobs;
+package com.livevox.multiplier.jobs;
 
-import com.livevox.commons.exceptions.MissingFieldsException;
-import com.livevox.commons.exceptions.UnauthorizedException;
-import com.livevox.commons.services.rest.report.LvStandardReportsRestServiceImpl;
-import com.livevox.integration.commons.domain.lvapi.AgentAccount;
-import com.livevox.integration.shareddata.multiplier.domain.JobRequest;
+import com.livevox.multiplier.domain.exceptions.MissingFieldsException;
+import com.livevox.multiplier.domain.exceptions.UnauthorizedException;
+import com.livevox.multiplier.services.impl.LvStandardReportsRestServiceImpl;
+import com.livevox.multiplier.domain.lvapi.AgentAccount;
+import com.livevox.multiplier.domain.JobRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.xml.ws.WebServiceException;

@@ -5,10 +5,10 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.commons.dao.mapper;
+package com.livevox.multiplier.dao.mapper;
 
-import com.livevox.commons.domain.Access;
-import com.livevox.commons.domain.LvSession;
+import com.livevox.multiplier.domain.Access;
+import com.livevox.multiplier.domain.LvSession;
 
 import org.springframework.jdbc.core.RowMapper;
 import java.io.Serializable;

@@ -5,7 +5,7 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.commons.services.rest.domain;
+package com.livevox.multiplier.domain.requests;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.livevox.integration.commons.domain.lvapi.ListRequest;

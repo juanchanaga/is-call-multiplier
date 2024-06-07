@@ -5,10 +5,10 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.domain;
+package com.livevox.multiplier.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.livevox.commons.services.rest.domain.RestFilter;
+import com.livevox.multiplier.domain.requests.RestFilter;
 import lombok.Data;
 import lombok.ToString;
 import org.apache.commons.beanutils.BeanUtils;
@@ -16,7 +16,7 @@ import org.apache.commons.beanutils.BeanUtils;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @ToString( callSuper = true)
-public class AgentRequest extends com.livevox.commons.services.rest.domain.AgentRequest {
+public class AgentRequest extends com.livevox.multiplier.domain.requests.AgentRequest {
 
     private static final long serialVersionUID = 5786255260784754L;
 

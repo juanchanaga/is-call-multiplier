@@ -5,13 +5,13 @@
  * IS-CALL-MULTIPLIER
  */
 
-package com.livevox.integration.shareddata.multiplier.config;
+package com.livevox.multiplier.configuration;
 
-import com.livevox.commons.dao.SharedDataDao;
-import com.livevox.commons.services.config.AtgConfigRestService;
-import com.livevox.commons.services.config.AtgConfigRestServiceImpl;
-import com.livevox.commons.services.config.AtgConfigServiceImpl;
-import com.livevox.commons.services.signin.SignInService;
+import com.livevox.multiplier.dao.SharedDataDao;
+import com.livevox.multiplier.services.config.AtgConfigRestService;
+import com.livevox.multiplier.services.config.AtgConfigRestServiceImpl;
+import com.livevox.multiplier.services.config.AtgConfigServiceImpl;
+import com.livevox.multiplier.services.sigin.SignInService;
 import com.livevox.is.util.grpc.exception.GlobalGrpcExceptionHandler;
 import com.livevox.is.util.rest.exception.GlobalExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class AppConfig {
             return configService;
         }
         configService = new AtgConfigServiceImpl();
-        configService.setAtgConfigService(configServiceClient() );
+        configService.setAtgConfigService(configServiceClient());
         configService.initialize();
 
         return configService;
@@ -81,12 +81,12 @@ public class AppConfig {
      * @return the sign in service
      */
     @Bean
-    public SignInService signInService(AtgConfigServiceImpl configService ) {
+    public SignInService appConfigSignInService(AtgConfigServiceImpl configService ) {
         return new SignInService(  configService );
     }
 
     @Bean
-    public SharedDataDao sharedDataDao() {
+    public SharedDataDao appConfigShareDataDao() {
         SharedDataDao sharedDataDao = new SharedDataDao();
         sharedDataDao.setDataSource(dataSource);
         return sharedDataDao;
